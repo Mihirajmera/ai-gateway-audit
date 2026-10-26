@@ -19,6 +19,91 @@ insecure                         7     4     3     0
 
 Read the [sample report](sample-output/gateway-audit.md) without installing anything.
 
+## Why the gateway is tier-0
+
+Every application and agent reaches every model through one process. That process holds the keys, sees the traffic and, often, stores both. Each box below is something an attacker who controls the gateway gets, and each label is the check that covers it.
+
+```mermaid
+flowchart LR
+    subgraph CALLERS["Callers"]
+        APP["Internal apps"]
+        AG["AI agents"]
+        DEV["Developers<br/>admin UI"]
+    end
+    subgraph GW["AI gateway: LiteLLM proxy"]
+        MK{{"Master key<br/>GWA-02"}}
+        UI["Admin UI and API docs<br/>GWA-05 · GWA-09"]
+        CFG["config.yaml + .env<br/>provider keys · GWA-01"]
+        DB[("Gateway database<br/>stored keys · GWA-04<br/>spend logs · GWA-03")]
+        CB["Logging callbacks<br/>Langfuse, S3 · GWA-03"]
+        IMG["Container image<br/>GWA-07"]
+    end
+    subgraph PROV["Model providers"]
+        OAI["OpenAI"]
+        ANT["Anthropic"]
+        AZ["Azure, Bedrock, Vertex"]
+    end
+    APP & AG -->|"requests<br/>size limits · GWA-10"| MK
+    DEV --> UI
+    MK --> CFG
+    CFG -->|"TLS verified · GWA-08<br/>budgets · GWA-06"| OAI & ANT & AZ
+    MK --> DB
+    MK --> CB
+    IMG -. "a repointed tag runs<br/>with all of the above" .-> GW
+
+    classDef caller fill:#e0f2fe,stroke:#0284c7,color:#0c4a6e
+    classDef crown fill:#fee2e2,stroke:#dc2626,color:#7f1d1d
+    classDef ext fill:#f3f4f6,stroke:#6b7280,color:#111827
+    classDef gate fill:#fef3c7,stroke:#d97706,color:#78350f
+    class APP,AG,DEV caller
+    class CFG,DB,CB,IMG crown
+    class UI,MK gate
+    class OAI,ANT,AZ ext
+```
+
+## How it works
+
+```mermaid
+flowchart LR
+    subgraph IN["📥 Inputs, per folder"]
+        C["config.yaml<br/>LiteLLM settings"]
+        D["docker-compose.yml<br/>image, environment, env_file"]
+        E[".env files"]
+    end
+    subgraph CORE["⚙️ ai_gateway_audit"]
+        P["Parsers<br/>secrets redacted here"]
+        M["Deployment model<br/>one per folder"]
+        X["10 checks<br/>GWA-01 … GWA-10"]
+        K[("Control catalog<br/>controls.yaml")]
+        XC[("Reviewed exceptions<br/>owner + expiry")]
+    end
+    subgraph OUT["📤 Audit outputs"]
+        R["gateway-audit.md<br/>reviewer report + sign-off"]
+        S["findings.csv<br/>owner, due date"]
+        V["evidence/*.json<br/>SHA-256 hashed"]
+        O["OSCAL 1.1.2<br/>assessment results"]
+    end
+    C & D & E --> P --> M --> X
+    K -. "NIST · SOC 2 · OWASP LLM<br/>needs: config or deployment" .-> X
+    XC -. "expired exceptions reopen" .-> X
+    X --> R & S & V & O
+
+    classDef input fill:#e0f2fe,stroke:#0284c7,color:#0c4a6e
+    classDef core fill:#ede9fe,stroke:#7c3aed,color:#3b0764
+    classDef data fill:#fef3c7,stroke:#d97706,color:#78350f
+    classDef output fill:#dcfce7,stroke:#16a34a,color:#14532d
+    class C,D,E input
+    class P,M,X core
+    class K,XC data
+    class R,S,V,O output
+```
+
+1. **Discover.** Every folder with a LiteLLM config or a Compose service running a LiteLLM image becomes one deployment. Compose `env_file:` references are followed.
+2. **Redact.** Plain-text secrets are replaced with `[REDACTED]` while parsing, so nothing downstream ever holds them.
+3. **Check.** Each check declares whether it needs the config or the deployment files. If the files it needs aren't there, it reports NOT ASSESSED.
+4. **Apply exceptions.** A finding stays open unless a reviewed exception with an approver and an unexpired date covers it.
+5. **Export.** A report for the reviewer, a CSV for tracking fixes, hashed evidence for the auditor and OSCAL for GRC tools.
+
 ## What it checks
 
 | Check | Control | Typical failure |
