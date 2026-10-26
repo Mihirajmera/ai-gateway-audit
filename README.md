@@ -1,5 +1,12 @@
 # ai-gateway-audit
 
+[![Tests](https://github.com/Mihirajmera/ai-gateway-audit/actions/workflows/tests.yml/badge.svg)](https://github.com/Mihirajmera/ai-gateway-audit/actions/workflows/tests.yml)
+[![CodeQL](https://github.com/Mihirajmera/ai-gateway-audit/actions/workflows/codeql.yml/badge.svg)](https://github.com/Mihirajmera/ai-gateway-audit/actions/workflows/codeql.yml)
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/Mihirajmera/ai-gateway-audit/badge)](https://scorecard.dev/viewer/?uri=github.com/Mihirajmera/ai-gateway-audit)
+[![Fuzzing: ClusterFuzzLite](https://img.shields.io/badge/fuzzing-ClusterFuzzLite-blue)](https://github.com/Mihirajmera/ai-gateway-audit/actions/workflows/cflite_batch.yml)
+![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+
 **Audit your AI gateway like the tier-0 system it is.**
 
 An AI gateway such as [LiteLLM](https://github.com/BerriAI/litellm) holds the API key for every model provider your company uses, and often every prompt and response that passes through it. On October 21, 2026, a compromised LiteLLM release shipped a payload that queried the gateway's credential tables directly ([analysis](https://mihirajmera.github.io/blog/the-ai-gateway-is-a-crown-jewel/)). Most teams still configure their gateway like a developer tool.
