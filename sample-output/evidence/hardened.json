@@ -1,0 +1,172 @@
+{
+  "audit_as_of": "2026-10-12",
+  "collected": "2026-10-12T00:00:00+00:00",
+  "deployment_id": "hardened",
+  "folder": "hardened",
+  "hash_scope": "sha256 of canonical JSON (sorted keys, no spaces) of {sources, inventory}",
+  "inventory": {
+    "config": {
+      "general_settings": {
+        "allowed_file_extensions": [
+          ".jsonl",
+          ".pdf",
+          ".txt"
+        ],
+        "disable_env_credential_login": true,
+        "master_key": "os.environ/LITELLM_MASTER_KEY",
+        "max_request_size_mb": 25,
+        "store_model_in_db": false,
+        "store_prompts_in_spend_logs": false
+      },
+      "litellm_settings": {
+        "budget_duration": "30d",
+        "max_budget": 2000,
+        "success_callback": [
+          "langfuse",
+          "prometheus"
+        ],
+        "turn_off_message_logging": true,
+        "upperbound_key_generate_params": {
+          "duration": "30d",
+          "max_budget": 100
+        }
+      },
+      "model_list": [
+        {
+          "litellm_params": {
+            "api_key": "os.environ/OPENAI_API_KEY",
+            "model": "openai/gpt-4o"
+          },
+          "model_name": "gpt-4o"
+        },
+        {
+          "litellm_params": {
+            "api_key": "os.environ/ANTHROPIC_API_KEY",
+            "model": "anthropic/claude-sonnet-5-5"
+          },
+          "model_name": "claude"
+        }
+      ]
+    },
+    "env": {
+      "ANTHROPIC_API_KEY": {
+        "literal": false,
+        "source": "hardened/docker-compose.yml",
+        "value": "${ANTHROPIC_API_KEY}"
+      },
+      "DATABASE_URL": {
+        "literal": false,
+        "source": "hardened/docker-compose.yml",
+        "value": "${DATABASE_URL}"
+      },
+      "LITELLM_MASTER_KEY": {
+        "literal": false,
+        "source": "hardened/docker-compose.yml",
+        "value": "${LITELLM_MASTER_KEY}"
+      },
+      "NO_DOCS": {
+        "literal": true,
+        "source": "hardened/docker-compose.yml",
+        "value": "True"
+      },
+      "NO_OPENAPI": {
+        "literal": true,
+        "source": "hardened/docker-compose.yml",
+        "value": "True"
+      },
+      "NO_REDOC": {
+        "literal": true,
+        "source": "hardened/docker-compose.yml",
+        "value": "True"
+      },
+      "OPENAI_API_KEY": {
+        "literal": false,
+        "source": "hardened/docker-compose.yml",
+        "value": "${OPENAI_API_KEY}"
+      }
+    },
+    "images": [
+      {
+        "ref": "ghcr.io/berriai/litellm:v1.106.2@sha256:0000000000000000000000000000000000000000000000000000000000000000",
+        "service": "litellm",
+        "source": "hardened/docker-compose.yml"
+      }
+    ],
+    "plaintext_secrets": []
+  },
+  "results": [
+    {
+      "check_id": "GWA-01",
+      "findings": [],
+      "status": "PASS",
+      "title": "Provider credentials are not stored in plain text"
+    },
+    {
+      "check_id": "GWA-02",
+      "findings": [],
+      "status": "PASS",
+      "title": "The proxy requires a master key that is not stored in plain text"
+    },
+    {
+      "check_id": "GWA-03",
+      "findings": [],
+      "status": "PASS",
+      "title": "Prompts and responses are kept out of logs"
+    },
+    {
+      "check_id": "GWA-04",
+      "findings": [],
+      "status": "PASS",
+      "title": "Provider keys are not held in the gateway database"
+    },
+    {
+      "check_id": "GWA-05",
+      "findings": [],
+      "status": "PASS",
+      "title": "The admin UI does not accept a shared environment login"
+    },
+    {
+      "check_id": "GWA-06",
+      "findings": [],
+      "status": "PASS",
+      "title": "Spend is capped globally and per key"
+    },
+    {
+      "check_id": "GWA-07",
+      "findings": [],
+      "status": "PASS",
+      "title": "The gateway image is pinned by digest"
+    },
+    {
+      "check_id": "GWA-08",
+      "findings": [],
+      "status": "PASS",
+      "title": "TLS certificates are verified on calls to providers"
+    },
+    {
+      "check_id": "GWA-09",
+      "findings": [],
+      "status": "PASS",
+      "title": "Interactive API documentation is disabled"
+    },
+    {
+      "check_id": "GWA-10",
+      "findings": [],
+      "status": "PASS",
+      "title": "Request and upload sizes are limited"
+    }
+  ],
+  "sha256": "666766d3f652d747afbd33b4114e25ba12934bf6e3256be962387b13274d55ec",
+  "sources": [
+    {
+      "path": "hardened/config.yaml",
+      "sha256": "787612c751da704322eb6fe2f6df964f82d48586de8a627b954a409c5f5d0b0a",
+      "type": "litellm-config"
+    },
+    {
+      "path": "hardened/docker-compose.yml",
+      "sha256": "6e5993665145f570e0d87a53fbabc613ac572b182e2f5d7cdbbdd199e7c89ef2",
+      "type": "compose"
+    }
+  ]
+}

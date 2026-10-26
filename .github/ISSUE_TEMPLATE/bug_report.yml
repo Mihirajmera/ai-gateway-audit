@@ -1,0 +1,19 @@
+name: Bug report
+description: A check fired when it shouldn't, missed something, or the tool crashed
+labels: [bug]
+body:
+  - type: input
+    id: version
+    attributes: {label: Version, description: Output of ai-gateway-audit --version}
+    validations: {required: true}
+  - type: textarea
+    id: input
+    attributes:
+      label: Config that reproduces it
+      description: The smallest config.yaml / Compose / .env that shows the problem. Remove real keys and passwords first.
+      render: yaml
+    validations: {required: true}
+  - type: textarea
+    id: expected
+    attributes: {label: What you expected, description: "Which check, and what should it have said?"}
+    validations: {required: true}

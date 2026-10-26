@@ -1,0 +1,28 @@
+# The same proxy with tier-0 controls. Secrets come from the environment, which is filled
+# from a secret manager at runtime.
+model_list:
+  - model_name: gpt-4o
+    litellm_params:
+      model: openai/gpt-4o
+      api_key: os.environ/OPENAI_API_KEY
+  - model_name: claude
+    litellm_params:
+      model: anthropic/claude-sonnet-5-5
+      api_key: os.environ/ANTHROPIC_API_KEY
+
+general_settings:
+  master_key: os.environ/LITELLM_MASTER_KEY
+  store_model_in_db: false
+  store_prompts_in_spend_logs: false
+  disable_env_credential_login: true
+  max_request_size_mb: 25
+  allowed_file_extensions: [".jsonl", ".pdf", ".txt"]
+
+litellm_settings:
+  success_callback: [langfuse, prometheus]
+  turn_off_message_logging: true
+  max_budget: 2000
+  budget_duration: 30d
+  upperbound_key_generate_params:
+    max_budget: 100
+    duration: 30d

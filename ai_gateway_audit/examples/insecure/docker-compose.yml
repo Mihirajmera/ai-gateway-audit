@@ -1,0 +1,11 @@
+services:
+  litellm:
+    image: ghcr.io/berriai/litellm:main-stable
+    command: ["--config", "/app/config.yaml"]
+    ports: ["4000:4000"]
+    volumes: ["./config.yaml:/app/config.yaml"]
+    environment:
+      DATABASE_URL: postgresql://llmproxy:example-db-password@db:5432/litellm
+      UI_USERNAME: admin
+      UI_PASSWORD: example-ui-password
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}

@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+.pytest_cache/
+# Audit output: regenerate with the scan command
+audit/
+audit-demo/
+dist/
+*.egg-info/
+build/

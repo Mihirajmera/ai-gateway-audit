@@ -1,0 +1,19 @@
+# A LiteLLM proxy set up the quick way. Every credential here is fake.
+model_list:
+  - model_name: gpt-4o
+    litellm_params:
+      model: openai/gpt-4o
+      api_key: example-openai-key-not-real
+  - model_name: claude
+    litellm_params:
+      model: anthropic/claude-sonnet-5-5
+      api_key: os.environ/ANTHROPIC_API_KEY
+
+general_settings:
+  master_key: sk-1234
+  store_model_in_db: true
+  store_prompts_in_spend_logs: true
+
+litellm_settings:
+  success_callback: [langfuse, prometheus]
+  ssl_verify: false

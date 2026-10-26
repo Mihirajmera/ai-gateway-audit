@@ -1,0 +1,15 @@
+services:
+  litellm:
+    # Pin the release you reviewed by digest. This digest is a placeholder; use the real one.
+    image: ghcr.io/berriai/litellm:v1.106.2@sha256:0000000000000000000000000000000000000000000000000000000000000000
+    command: ["--config", "/app/config.yaml"]
+    ports: ["127.0.0.1:4000:4000"]
+    volumes: ["./config.yaml:/app/config.yaml:ro"]
+    environment:
+      LITELLM_MASTER_KEY: ${LITELLM_MASTER_KEY}
+      DATABASE_URL: ${DATABASE_URL}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      NO_DOCS: "True"
+      NO_REDOC: "True"
+      NO_OPENAPI: "True"

@@ -1,0 +1,297 @@
+{
+  "audit_as_of": "2026-10-12",
+  "collected": "2026-10-12T00:00:00+00:00",
+  "deployment_id": "insecure",
+  "folder": "insecure",
+  "hash_scope": "sha256 of canonical JSON (sorted keys, no spaces) of {sources, inventory}",
+  "inventory": {
+    "config": {
+      "general_settings": {
+        "master_key": "[REDACTED]",
+        "store_model_in_db": true,
+        "store_prompts_in_spend_logs": true
+      },
+      "litellm_settings": {
+        "ssl_verify": false,
+        "success_callback": [
+          "langfuse",
+          "prometheus"
+        ]
+      },
+      "model_list": [
+        {
+          "litellm_params": {
+            "api_key": "[REDACTED]",
+            "model": "openai/gpt-4o"
+          },
+          "model_name": "gpt-4o"
+        },
+        {
+          "litellm_params": {
+            "api_key": "os.environ/ANTHROPIC_API_KEY",
+            "model": "anthropic/claude-sonnet-5-5"
+          },
+          "model_name": "claude"
+        }
+      ]
+    },
+    "env": {
+      "ANTHROPIC_API_KEY": {
+        "literal": false,
+        "source": "insecure/docker-compose.yml",
+        "value": "${ANTHROPIC_API_KEY}"
+      },
+      "DATABASE_URL": {
+        "literal": true,
+        "source": "insecure/docker-compose.yml",
+        "value": "[REDACTED]"
+      },
+      "UI_PASSWORD": {
+        "literal": true,
+        "source": "insecure/docker-compose.yml",
+        "value": "[REDACTED]"
+      },
+      "UI_USERNAME": {
+        "literal": true,
+        "source": "insecure/docker-compose.yml",
+        "value": "admin"
+      }
+    },
+    "images": [
+      {
+        "ref": "ghcr.io/berriai/litellm:main-stable",
+        "service": "litellm",
+        "source": "insecure/docker-compose.yml"
+      }
+    ],
+    "plaintext_secrets": [
+      {
+        "setting": "model_list[0].litellm_params.api_key",
+        "source": "insecure/config.yaml"
+      },
+      {
+        "setting": "general_settings.master_key",
+        "source": "insecure/config.yaml"
+      },
+      {
+        "setting": "DATABASE_URL",
+        "source": "insecure/docker-compose.yml"
+      },
+      {
+        "setting": "UI_PASSWORD",
+        "source": "insecure/docker-compose.yml"
+      }
+    ]
+  },
+  "results": [
+    {
+      "check_id": "GWA-01",
+      "findings": [
+        {
+          "check_id": "GWA-01",
+          "deployment_id": "insecure",
+          "exception": null,
+          "message": "`model_list[0].litellm_params.api_key` in `insecure/config.yaml` is a credential written in plain text.",
+          "recommendation": "Reference it with os.environ/NAME (or ${NAME} in Compose) and load it from a secret manager. Rotate it: anyone who can read this file has had it.",
+          "setting": "model_list[0].litellm_params.api_key",
+          "severity": "high"
+        },
+        {
+          "check_id": "GWA-01",
+          "deployment_id": "insecure",
+          "exception": null,
+          "message": "`DATABASE_URL` in `insecure/docker-compose.yml` is a credential written in plain text.",
+          "recommendation": "Reference it with os.environ/NAME (or ${NAME} in Compose) and load it from a secret manager. Rotate it: anyone who can read this file has had it.",
+          "setting": "DATABASE_URL",
+          "severity": "high"
+        }
+      ],
+      "status": "FAIL",
+      "title": "Provider credentials are not stored in plain text"
+    },
+    {
+      "check_id": "GWA-02",
+      "findings": [
+        {
+          "check_id": "GWA-02",
+          "deployment_id": "insecure",
+          "exception": null,
+          "message": "The master key is written in plain text in the LiteLLM config. It grants admin access to every model, key and budget on the proxy.",
+          "recommendation": "Set master_key: os.environ/LITELLM_MASTER_KEY and rotate the key.",
+          "setting": "general_settings.master_key",
+          "severity": "high"
+        }
+      ],
+      "status": "FAIL",
+      "title": "The proxy requires a master key that is not stored in plain text"
+    },
+    {
+      "check_id": "GWA-03",
+      "findings": [
+        {
+          "check_id": "GWA-03",
+          "deployment_id": "insecure",
+          "exception": null,
+          "message": "store_prompts_in_spend_logs is on: every prompt and response is written to the gateway database, next to the spend records.",
+          "recommendation": "Turn it off. If you need content for debugging, log a sample, redact it, and set a retention limit.",
+          "setting": "general_settings.store_prompts_in_spend_logs",
+          "severity": "high"
+        },
+        {
+          "check_id": "GWA-03",
+          "deployment_id": "insecure",
+          "exception": null,
+          "message": "Prompts and responses are sent to langfuse because turn_off_message_logging is not set.",
+          "recommendation": "Set litellm_settings.turn_off_message_logging: true so callbacks receive metadata only, or document why each destination may hold message content.",
+          "setting": "litellm_settings.turn_off_message_logging",
+          "severity": "medium"
+        }
+      ],
+      "status": "FAIL",
+      "title": "Prompts and responses are kept out of logs"
+    },
+    {
+      "check_id": "GWA-04",
+      "findings": [
+        {
+          "check_id": "GWA-04",
+          "deployment_id": "insecure",
+          "exception": null,
+          "message": "store_model_in_db is on and no key management system is configured, so provider keys added through the UI or API are stored in the gateway database. One query can read them all, which is what the October 2026 LiteLLM payload did.",
+          "recommendation": "Keep provider keys in a secret manager (general_settings.key_management_system) and reference them from the config, or restrict and monitor access to the credentials tables.",
+          "setting": "general_settings.store_model_in_db",
+          "severity": "medium"
+        }
+      ],
+      "status": "FAIL",
+      "title": "Provider keys are not held in the gateway database"
+    },
+    {
+      "check_id": "GWA-05",
+      "findings": [
+        {
+          "check_id": "GWA-05",
+          "deployment_id": "insecure",
+          "exception": null,
+          "message": "The admin UI accepts the shared UI_USERNAME / UI_PASSWORD login (or the master key when UI_PASSWORD is unset), so admin actions can't be tied to a person.",
+          "recommendation": "Create named proxy_admin users or connect SSO, then set general_settings.disable_env_credential_login: true.",
+          "setting": "general_settings.disable_env_credential_login",
+          "severity": "medium"
+        },
+        {
+          "check_id": "GWA-05",
+          "deployment_id": "insecure",
+          "exception": null,
+          "message": "UI_PASSWORD is written in plain text in `insecure/docker-compose.yml`.",
+          "recommendation": "Remove it, rotate it, and move admins to named accounts or SSO.",
+          "setting": "UI_PASSWORD",
+          "severity": "high"
+        }
+      ],
+      "status": "FAIL",
+      "title": "The admin UI does not accept a shared environment login"
+    },
+    {
+      "check_id": "GWA-06",
+      "findings": [
+        {
+          "check_id": "GWA-06",
+          "deployment_id": "insecure",
+          "exception": null,
+          "message": "There is no global spend cap. A leaked virtual key or a runaway agent can spend without limit, and stolen gateway access is used to run attackers' workloads.",
+          "recommendation": "Set litellm_settings.max_budget (and budget_duration) to a limit someone has approved.",
+          "setting": "litellm_settings.max_budget",
+          "severity": "medium"
+        },
+        {
+          "check_id": "GWA-06",
+          "deployment_id": "insecure",
+          "exception": null,
+          "message": "Virtual keys can be created with no budget limit.",
+          "recommendation": "Set litellm_settings.upperbound_key_generate_params.max_budget so no key can exceed it.",
+          "setting": "litellm_settings.upperbound_key_generate_params",
+          "severity": "low"
+        }
+      ],
+      "status": "FAIL",
+      "title": "Spend is capped globally and per key"
+    },
+    {
+      "check_id": "GWA-07",
+      "findings": [
+        {
+          "check_id": "GWA-07",
+          "deployment_id": "insecure",
+          "exception": null,
+          "message": "Service `litellm` runs `ghcr.io/berriai/litellm:main-stable`, a moving tag. Whatever is published under it next runs with every provider key. LiteLLM's October 2026 compromise repointed latest, main-latest and main-stable to a malicious image.",
+          "recommendation": "Pin a reviewed release by digest: image: \u2026litellm@sha256:<digest>.",
+          "setting": "services.litellm.image",
+          "severity": "high"
+        }
+      ],
+      "status": "FAIL",
+      "title": "The gateway image is pinned by digest"
+    },
+    {
+      "check_id": "GWA-08",
+      "findings": [
+        {
+          "check_id": "GWA-08",
+          "deployment_id": "insecure",
+          "exception": null,
+          "message": "ssl_verify is off, so provider certificates aren't checked and anyone on the network path can read prompts and provider keys.",
+          "recommendation": "Remove ssl_verify: false. For a private CA, set ssl_verify to the CA bundle path.",
+          "setting": "litellm_settings.ssl_verify",
+          "severity": "high"
+        }
+      ],
+      "status": "FAIL",
+      "title": "TLS certificates are verified on calls to providers"
+    },
+    {
+      "check_id": "GWA-09",
+      "findings": [
+        {
+          "check_id": "GWA-09",
+          "deployment_id": "insecure",
+          "exception": null,
+          "message": "NO_DOCS, NO_REDOC, NO_OPENAPI are not set to True, so the proxy publishes interactive API documentation describing every admin route.",
+          "recommendation": "Set NO_DOCS, NO_REDOC and NO_OPENAPI to \"True\" in production. Each controls a separate page.",
+          "setting": "NO_DOCS, NO_REDOC, NO_OPENAPI",
+          "severity": "low"
+        }
+      ],
+      "status": "FAIL",
+      "title": "Interactive API documentation is disabled"
+    },
+    {
+      "check_id": "GWA-10",
+      "findings": [
+        {
+          "check_id": "GWA-10",
+          "deployment_id": "insecure",
+          "exception": null,
+          "message": "max_request_size_mb and allowed_file_extensions are not set, so request bodies and file uploads are not limited.",
+          "recommendation": "Set general_settings.max_request_size_mb and an allowed_file_extensions allowlist ([] rejects all uploads).",
+          "setting": "general_settings.max_request_size_mb, general_settings.allowed_file_extensions",
+          "severity": "low"
+        }
+      ],
+      "status": "FAIL",
+      "title": "Request and upload sizes are limited"
+    }
+  ],
+  "sha256": "928a34e1a6a4bb68a8c3984431f955efe29139f540e58093f4c3f3167f0d1479",
+  "sources": [
+    {
+      "path": "insecure/config.yaml",
+      "sha256": "044166f085c68d1f5f3c8acbe51e8fbb81be80ef839deff0246473f548f1bbc6",
+      "type": "litellm-config"
+    },
+    {
+      "path": "insecure/docker-compose.yml",
+      "sha256": "2514814ed6317c71b7ae8a9758f6b2b67a3466508fbe9dba99abb8177252883c",
+      "type": "compose"
+    }
+  ]
+}

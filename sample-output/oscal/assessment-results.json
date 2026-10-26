@@ -1,0 +1,397 @@
+{
+  "assessment-results": {
+    "uuid": "539e818e-4f47-51a0-ab31-28a13adbf087",
+    "metadata": {
+      "title": "AI gateway configuration audit",
+      "last-modified": "2026-10-12T00:00:00+00:00",
+      "version": "2026-10-12",
+      "oscal-version": "1.1.2"
+    },
+    "import-ap": {
+      "href": "#"
+    },
+    "results": [
+      {
+        "uuid": "4f82983a-520e-53ce-a305-c4a3152b4fb2",
+        "title": "AI gateway audit as of 2026-10-12",
+        "description": "Automated review of AI gateway configuration against tier-0 infrastructure controls.",
+        "start": "2026-10-12T00:00:00+00:00",
+        "end": "2026-10-12T00:00:00+00:00",
+        "reviewed-controls": {
+          "control-selections": [
+            {
+              "include-controls": [
+                {
+                  "control-id": "ac-2"
+                },
+                {
+                  "control-id": "ac-3"
+                },
+                {
+                  "control-id": "au-3.3"
+                },
+                {
+                  "control-id": "cm-2"
+                },
+                {
+                  "control-id": "cm-7"
+                },
+                {
+                  "control-id": "ia-2"
+                },
+                {
+                  "control-id": "ia-5.7"
+                },
+                {
+                  "control-id": "sc-12"
+                },
+                {
+                  "control-id": "sc-23"
+                },
+                {
+                  "control-id": "sc-28"
+                },
+                {
+                  "control-id": "sc-5"
+                },
+                {
+                  "control-id": "sc-6"
+                },
+                {
+                  "control-id": "sc-8"
+                },
+                {
+                  "control-id": "si-12"
+                },
+                {
+                  "control-id": "si-7"
+                }
+              ]
+            }
+          ]
+        },
+        "observations": [
+          {
+            "uuid": "07441e9a-5079-54cc-9685-ec79f8db5db0",
+            "title": "Configuration audit of hardened",
+            "description": "2 files read, 0 findings.",
+            "methods": [
+              "EXAMINE"
+            ],
+            "types": [
+              "control-objective"
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "495e7bae-c8ae-5f7a-a181-4e9c5280b752",
+                "type": "component",
+                "title": "hardened"
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "href": "../evidence/hardened.json",
+                "description": "Hashed gateway inventory",
+                "props": [
+                  {
+                    "name": "sha256",
+                    "value": "666766d3f652d747afbd33b4114e25ba12934bf6e3256be962387b13274d55ec"
+                  }
+                ]
+              }
+            ],
+            "collected": "2026-10-12T00:00:00+00:00"
+          },
+          {
+            "uuid": "d740e2e8-b930-57ad-8bc2-acaa0f0d13b4",
+            "title": "Configuration audit of insecure",
+            "description": "2 files read, 14 findings.",
+            "methods": [
+              "EXAMINE"
+            ],
+            "types": [
+              "finding"
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "503e0b65-3e84-53e9-9998-a651c6067314",
+                "type": "component",
+                "title": "insecure"
+              }
+            ],
+            "relevant-evidence": [
+              {
+                "href": "../evidence/insecure.json",
+                "description": "Hashed gateway inventory",
+                "props": [
+                  {
+                    "name": "sha256",
+                    "value": "928a34e1a6a4bb68a8c3984431f955efe29139f540e58093f4c3f3167f0d1479"
+                  }
+                ]
+              }
+            ],
+            "collected": "2026-10-12T00:00:00+00:00"
+          }
+        ],
+        "findings": [
+          {
+            "uuid": "e942d98d-4898-509d-a3ea-b42b279faa24",
+            "title": "AC-2: GWA-05",
+            "description": "The admin UI does not accept a shared environment login",
+            "target": {
+              "type": "objective-id",
+              "target-id": "ac-2",
+              "status": {
+                "state": "not-satisfied"
+              }
+            },
+            "related-observations": [
+              {
+                "observation-uuid": "d740e2e8-b930-57ad-8bc2-acaa0f0d13b4"
+              }
+            ]
+          },
+          {
+            "uuid": "769e2d1e-9d16-5839-91c4-c2af62640481",
+            "title": "AC-3: GWA-02",
+            "description": "The proxy requires a master key that is not stored in plain text",
+            "target": {
+              "type": "objective-id",
+              "target-id": "ac-3",
+              "status": {
+                "state": "not-satisfied"
+              }
+            },
+            "related-observations": [
+              {
+                "observation-uuid": "d740e2e8-b930-57ad-8bc2-acaa0f0d13b4"
+              }
+            ]
+          },
+          {
+            "uuid": "ecdeac99-b172-5977-b06c-8760c91d9fe2",
+            "title": "AU-3(3): GWA-03",
+            "description": "Prompts and responses are kept out of logs",
+            "target": {
+              "type": "objective-id",
+              "target-id": "au-3.3",
+              "status": {
+                "state": "not-satisfied"
+              }
+            },
+            "related-observations": [
+              {
+                "observation-uuid": "d740e2e8-b930-57ad-8bc2-acaa0f0d13b4"
+              }
+            ]
+          },
+          {
+            "uuid": "08b10b9e-cf0a-59af-8b49-f6f5075e6b90",
+            "title": "CM-2: GWA-07",
+            "description": "The gateway image is pinned by digest",
+            "target": {
+              "type": "objective-id",
+              "target-id": "cm-2",
+              "status": {
+                "state": "not-satisfied"
+              }
+            },
+            "related-observations": [
+              {
+                "observation-uuid": "d740e2e8-b930-57ad-8bc2-acaa0f0d13b4"
+              }
+            ]
+          },
+          {
+            "uuid": "c3213af7-c7f0-5391-bf0d-944be91b4072",
+            "title": "CM-7: GWA-09, GWA-10",
+            "description": "Interactive API documentation is disabled; Request and upload sizes are limited",
+            "target": {
+              "type": "objective-id",
+              "target-id": "cm-7",
+              "status": {
+                "state": "not-satisfied"
+              }
+            },
+            "related-observations": [
+              {
+                "observation-uuid": "d740e2e8-b930-57ad-8bc2-acaa0f0d13b4"
+              }
+            ]
+          },
+          {
+            "uuid": "871414af-58db-5f73-9775-05aec06bb1f9",
+            "title": "IA-2: GWA-02, GWA-05",
+            "description": "The proxy requires a master key that is not stored in plain text; The admin UI does not accept a shared environment login",
+            "target": {
+              "type": "objective-id",
+              "target-id": "ia-2",
+              "status": {
+                "state": "not-satisfied"
+              }
+            },
+            "related-observations": [
+              {
+                "observation-uuid": "d740e2e8-b930-57ad-8bc2-acaa0f0d13b4"
+              }
+            ]
+          },
+          {
+            "uuid": "c97b99fb-63a1-56c8-9eea-43649141e1f3",
+            "title": "IA-5(7): GWA-01, GWA-02",
+            "description": "Provider credentials are not stored in plain text; The proxy requires a master key that is not stored in plain text",
+            "target": {
+              "type": "objective-id",
+              "target-id": "ia-5.7",
+              "status": {
+                "state": "not-satisfied"
+              }
+            },
+            "related-observations": [
+              {
+                "observation-uuid": "d740e2e8-b930-57ad-8bc2-acaa0f0d13b4"
+              }
+            ]
+          },
+          {
+            "uuid": "e34a1c89-8e15-5839-be21-af3fc24f7858",
+            "title": "SC-12: GWA-04",
+            "description": "Provider keys are not held in the gateway database",
+            "target": {
+              "type": "objective-id",
+              "target-id": "sc-12",
+              "status": {
+                "state": "not-satisfied"
+              }
+            },
+            "related-observations": [
+              {
+                "observation-uuid": "d740e2e8-b930-57ad-8bc2-acaa0f0d13b4"
+              }
+            ]
+          },
+          {
+            "uuid": "09151327-ac0a-5385-b1ca-00f30ebce3a4",
+            "title": "SC-23: GWA-08",
+            "description": "TLS certificates are verified on calls to providers",
+            "target": {
+              "type": "objective-id",
+              "target-id": "sc-23",
+              "status": {
+                "state": "not-satisfied"
+              }
+            },
+            "related-observations": [
+              {
+                "observation-uuid": "d740e2e8-b930-57ad-8bc2-acaa0f0d13b4"
+              }
+            ]
+          },
+          {
+            "uuid": "f53c780b-0d02-5648-afe9-200f87563647",
+            "title": "SC-28: GWA-01, GWA-04",
+            "description": "Provider credentials are not stored in plain text; Provider keys are not held in the gateway database",
+            "target": {
+              "type": "objective-id",
+              "target-id": "sc-28",
+              "status": {
+                "state": "not-satisfied"
+              }
+            },
+            "related-observations": [
+              {
+                "observation-uuid": "d740e2e8-b930-57ad-8bc2-acaa0f0d13b4"
+              }
+            ]
+          },
+          {
+            "uuid": "afc4aaa4-1280-57c4-ad60-d4d4efd1107a",
+            "title": "SC-5: GWA-10",
+            "description": "Request and upload sizes are limited",
+            "target": {
+              "type": "objective-id",
+              "target-id": "sc-5",
+              "status": {
+                "state": "not-satisfied"
+              }
+            },
+            "related-observations": [
+              {
+                "observation-uuid": "d740e2e8-b930-57ad-8bc2-acaa0f0d13b4"
+              }
+            ]
+          },
+          {
+            "uuid": "f5a51493-2fe3-5a8c-a794-8a228cf4049b",
+            "title": "SC-6: GWA-06",
+            "description": "Spend is capped globally and per key",
+            "target": {
+              "type": "objective-id",
+              "target-id": "sc-6",
+              "status": {
+                "state": "not-satisfied"
+              }
+            },
+            "related-observations": [
+              {
+                "observation-uuid": "d740e2e8-b930-57ad-8bc2-acaa0f0d13b4"
+              }
+            ]
+          },
+          {
+            "uuid": "a87d0c9c-4321-5047-bfde-3c25914e7578",
+            "title": "SC-8: GWA-08",
+            "description": "TLS certificates are verified on calls to providers",
+            "target": {
+              "type": "objective-id",
+              "target-id": "sc-8",
+              "status": {
+                "state": "not-satisfied"
+              }
+            },
+            "related-observations": [
+              {
+                "observation-uuid": "d740e2e8-b930-57ad-8bc2-acaa0f0d13b4"
+              }
+            ]
+          },
+          {
+            "uuid": "3b2dd714-cd88-55e1-83d9-fde56a67fcef",
+            "title": "SI-12: GWA-03",
+            "description": "Prompts and responses are kept out of logs",
+            "target": {
+              "type": "objective-id",
+              "target-id": "si-12",
+              "status": {
+                "state": "not-satisfied"
+              }
+            },
+            "related-observations": [
+              {
+                "observation-uuid": "d740e2e8-b930-57ad-8bc2-acaa0f0d13b4"
+              }
+            ]
+          },
+          {
+            "uuid": "c91699bc-a460-5fb3-a964-5bc317320298",
+            "title": "SI-7: GWA-07",
+            "description": "The gateway image is pinned by digest",
+            "target": {
+              "type": "objective-id",
+              "target-id": "si-7",
+              "status": {
+                "state": "not-satisfied"
+              }
+            },
+            "related-observations": [
+              {
+                "observation-uuid": "d740e2e8-b930-57ad-8bc2-acaa0f0d13b4"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
