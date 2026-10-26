@@ -24,40 +24,40 @@ Read the [sample report](sample-output/gateway-audit.md) without installing anyt
 Every application and agent reaches every model through one process. That process holds the keys, sees the traffic and, often, stores both. Each box below is something an attacker who controls the gateway gets, and each label is the check that covers it.
 
 ```mermaid
-flowchart LR
+flowchart TB
     subgraph CALLERS["Callers"]
+        direction LR
         APP["Internal apps"]
         AG["AI agents"]
-        DEV["Developers<br/>admin UI"]
+        DEV["Developers"]
     end
-    subgraph GW["AI gateway: LiteLLM proxy"]
+    subgraph GW["AI gateway: LiteLLM proxy · one process holds all of this"]
+        direction LR
         MK{{"Master key<br/>GWA-02"}}
+        CFG["Provider keys in<br/>config.yaml and .env<br/>GWA-01"]
+        DB[("Gateway database<br/>stored keys GWA-04<br/>spend logs GWA-03")]
+        CB["Logging callbacks<br/>Langfuse, S3<br/>GWA-03"]
         UI["Admin UI and API docs<br/>GWA-05 · GWA-09"]
-        CFG["config.yaml + .env<br/>provider keys · GWA-01"]
-        DB[("Gateway database<br/>stored keys · GWA-04<br/>spend logs · GWA-03")]
-        CB["Logging callbacks<br/>Langfuse, S3 · GWA-03"]
         IMG["Container image<br/>GWA-07"]
     end
     subgraph PROV["Model providers"]
+        direction LR
         OAI["OpenAI"]
         ANT["Anthropic"]
         AZ["Azure, Bedrock, Vertex"]
     end
-    APP & AG -->|"requests<br/>size limits · GWA-10"| MK
-    DEV --> UI
-    MK --> CFG
-    CFG -->|"TLS verified · GWA-08<br/>budgets · GWA-06"| OAI & ANT & AZ
-    MK --> DB
-    MK --> CB
-    IMG -. "a repointed tag runs<br/>with all of the above" .-> GW
+    ATK["⚠️ A repointed image tag<br/>runs with everything above"]
+    CALLERS -->|"requests · size limits GWA-10"| GW
+    GW -->|"TLS verified GWA-08 · budgets GWA-06"| PROV
+    ATK -.-> IMG
 
     classDef caller fill:#e0f2fe,stroke:#0284c7,color:#0c4a6e
     classDef crown fill:#fee2e2,stroke:#dc2626,color:#7f1d1d
-    classDef ext fill:#f3f4f6,stroke:#6b7280,color:#111827
     classDef gate fill:#fef3c7,stroke:#d97706,color:#78350f
+    classDef ext fill:#f3f4f6,stroke:#6b7280,color:#111827
     class APP,AG,DEV caller
-    class CFG,DB,CB,IMG crown
-    class UI,MK gate
+    class CFG,DB,CB,IMG,ATK crown
+    class MK,UI gate
     class OAI,ANT,AZ ext
 ```
 
