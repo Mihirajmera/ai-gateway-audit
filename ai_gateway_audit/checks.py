@@ -3,6 +3,7 @@ means the control is satisfied. A check whose input isn't present (for example, 
 file to show which image runs) is reported as NOT ASSESSED rather than passed."""
 from __future__ import annotations
 
+import re
 from pathlib import Path
 from typing import Callable
 
@@ -13,6 +14,7 @@ from .model import REDACTED, Deployment, Finding
 _CATALOG = yaml.safe_load((Path(__file__).parent / 'controls.yaml').read_text(encoding='utf-8'))
 CONTROLS = _CATALOG['controls']
 MANUAL = _CATALOG['manual']
+ADVISORIES = yaml.safe_load((Path(__file__).parent / 'advisories.yaml').read_text(encoding='utf-8'))
 
 # Tags that move. LiteLLM's October 2026 compromise repointed latest, main-latest and main-stable.
 MUTABLE_TAGS = {'latest', 'main', 'main-latest', 'main-stable', 'stable', 'dev', 'nightly'}
@@ -37,7 +39,11 @@ def assessable(check_id: str, dep: Deployment) -> bool:
     needs = CONTROLS[check_id]['needs']
     if needs == 'config':
         return dep.config_found
-    return dep.deployment_found and (check_id != 'GWA-07' or bool(dep.images))
+    if check_id == 'GWA-07':
+        return dep.deployment_found and bool(dep.images)
+    if check_id == 'GWA-11':                 # only an image tag says which LiteLLM release runs
+        return dep.deployment_found and any(litellm_version(img.ref) for img in dep.images)
+    return dep.deployment_found
 
 
 def run_all(dep: Deployment) -> dict[str, list[Finding] | None]:
@@ -262,3 +268,81 @@ def size_limits(dep: Deployment) -> list[Finding]:
                     'and file uploads are not limited.',
                     'Set general_settings.max_request_size_mb and an allowed_file_extensions allowlist '
                     '([] rejects all uploads).', setting=', '.join(f'general_settings.{k}' for k in missing))]
+
+
+# shortcut: versions come only from the image tag (v1.95.0, main-v1.95.0-stable, 1.95.0@sha256:…);
+# a gateway installed with pip, or pinned by digest alone, is NOT ASSESSED rather than guessed.
+_VERSION = re.compile(r'(?<![\d.])v?(\d+)\.(\d+)\.(\d+)(rc|dev)?')
+
+
+def litellm_version(ref: str) -> tuple[int, int, int, int] | None:
+    """(major, minor, patch, 1) for a release, (…, 0) for a pre-release, which sorts before it."""
+    last = ref.split('@', 1)[0].rsplit('/', 1)[-1]
+    if ':' not in last or 'litellm' not in last.split(':', 1)[0]:
+        return None
+    m = _VERSION.search(last.split(':', 1)[1])
+    return (int(m[1]), int(m[2]), int(m[3]), 0 if m[4] else 1) if m else None
+
+
+def _parse(v: str) -> tuple[int, int, int, int]:
+    a, b, c = (int(x) for x in v.split('.'))
+    return a, b, c, 1
+
+
+def _affected(version, spec: str) -> bool:
+    for clause in spec.split(','):
+        op, v = clause.split()
+        bound = _parse(v)
+        ok = {'<': version < bound, '<=': version <= bound, '>=': version >= bound, '>': version > bound}[op]
+        if not ok:
+            return False
+    return True
+
+
+def _fixed_in(spec: str) -> str | None:
+    upper = [c.split()[1] for c in spec.split(',') if c.split()[0] == '<']
+    return upper[0] if upper else None
+
+
+def _first_clean(version) -> str | None:
+    """The lowest fixed release above `version` that no listed advisory affects. A fix for one
+    advisory can still be inside another's range, so each candidate is checked against all."""
+    candidates = sorted({f for a in ADVISORIES['advisories'] for s in a['ranges'] if (f := _fixed_in(s))}, key=_parse)
+    for c in candidates:
+        if _parse(c) > version and not any(_affected(_parse(c), s) for a in ADVISORIES['advisories'] for s in a['ranges']):
+            return c
+    return None
+
+
+@check('GWA-11')
+def known_advisories(dep: Deployment) -> list[Finding]:
+    out = []
+    for img in dep.images:
+        version = litellm_version(img.ref)
+        if not version:
+            continue
+        hits, malware = [], False
+        for adv in ADVISORIES['advisories']:
+            spec = next((s for s in adv['ranges'] if _affected(version, s)), None)
+            if spec:
+                hits.append(adv)
+                malware |= bool(adv.get('no_fix'))
+        if not hits:
+            continue
+        shown = '.'.join(map(str, version[:3])) + ('' if version[3] else ' (pre-release)')
+        names = ', '.join(a.get('cve') or a['id'] for a in hits[:3]) + (f' and {len(hits) - 3} more' if len(hits) > 3 else '')
+        critical = sum(a['severity'] == 'critical' for a in hits)
+        msg = (f'Service `{img.service}` runs LiteLLM {shown}, affected by {len(hits)} high or critical '
+               f'advisor{"y" if len(hits) == 1 else "ies"} ({critical} critical) known as of '
+               f'{ADVISORIES["as_of"]}: {names}. First: {hits[0]["summary"]}.')
+        target = _first_clean(version)
+        upgrade = (f'Upgrade to {target} or later' if target else
+                   'Upgrade to the latest release (no release in the bundled list fixes every advisory)')
+        if malware:
+            rec = ('Stop this container now: this release was published with credential-harvesting malware. '
+                   f'{upgrade}, and rotate the master key and every provider key.')
+        else:
+            rec = (f'{upgrade} and pin it by digest. If anyone other than admins could sign in while this '
+                   'version ran, rotate the master key and provider keys after upgrading.')
+        out.append(Finding('GWA-11', 'high', dep.id, msg, rec, setting=f'services.{img.service}.image'))
+    return out

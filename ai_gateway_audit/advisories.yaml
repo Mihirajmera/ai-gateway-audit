@@ -1,0 +1,37 @@
+# High and critical LiteLLM advisories from the GitHub Advisory Database, used by GWA-11.
+# Ranges use the database's own syntax. Pre-release ranges (rc) are left out.
+# Update `as_of` whenever entries are added, so a report says how current its list was.
+as_of: 2026-11-11
+source: https://github.com/advisories?query=ecosystem%3Apip+litellm
+advisories:
+  - {id: GHSA-g5ff-637f-6q2m, severity: high, ranges: ["< 1.95.0"],
+     summary: "internal_user_viewer can read any local file, including the master key, via vertex_ai_credentials"}
+  - {id: GHSA-7hp6-4w63-5g45, cve: CVE-2026-114612, severity: high,
+     ranges: [">= 1.91.0, < 1.100.4", ">= 1.101.0, < 1.101.3", ">= 1.102.0, < 1.102.2", ">= 1.103.0, < 1.103.1"],
+     summary: "internal_user can forge an admin session through salt-key reuse and run commands on the host"}
+  - {id: GHSA-6wvf-77m9-58rm, cve: CVE-2026-37004, severity: critical, ranges: ["< 1.83.7"],
+     summary: "server-side template injection in the /prompts/test endpoint"}
+  - {id: GHSA-4xpc-pv4p-pm3w, cve: CVE-2026-49468, severity: critical, ranges: ["< 1.84.0"],
+     summary: "authentication bypass via Host header injection"}
+  - {id: GHSA-7488-6r32-c95q, cve: CVE-2026-59822, severity: high, ranges: ["< 1.84.0"],
+     summary: "MCP authentication bypass via OAuth2 passthrough fallback"}
+  - {id: GHSA-qrc4-49gv-mv9m, cve: CVE-2026-47101, severity: high, ranges: ["< 1.83.14"],
+     summary: "internal_user can create API keys for routes their role does not permit"}
+  - {id: GHSA-wpfp-gwwc-vwq6, cve: CVE-2026-47102, severity: high, ranges: ["< 1.83.10"],
+     summary: "a user can change their own user_role via /user/update"}
+  - {id: GHSA-wxxx-gvqv-xp7p, cve: CVE-2026-40217, severity: high, ranges: [">= 1.81.8, < 1.83.10"],
+     summary: "sandbox escape in the custom-code guardrail"}
+  - {id: GHSA-v4p8-mg3p-g94g, cve: CVE-2026-42271, severity: high, ranges: [">= 1.74.2, < 1.83.7"],
+     summary: "authenticated command execution via the MCP stdio test endpoints"}
+  - {id: GHSA-r75f-5x8p-qvmc, cve: CVE-2026-42208, severity: critical, ranges: [">= 1.81.16, < 1.83.7"],
+     summary: "SQL injection in proxy API key verification"}
+  - {id: GHSA-xqmj-j6mv-4862, cve: CVE-2026-42203, severity: high, ranges: [">= 1.80.5, < 1.83.7"],
+     summary: "server-side template injection in /prompts/test"}
+  - {id: GHSA-69x8-hrgq-fjj8, severity: high, ranges: ["< 1.83.0"],
+     summary: "password hash exposure and pass-the-hash authentication bypass"}
+  - {id: GHSA-jjhc-v7c2-5hh6, cve: CVE-2026-35030, severity: critical, ranges: ["< 1.83.0"],
+     summary: "authentication bypass via OIDC userinfo cache key collision"}
+  - {id: GHSA-53mr-6c8q-9789, cve: CVE-2026-35029, severity: high, ranges: ["< 1.83.0"],
+     summary: "privilege escalation via the unrestricted proxy configuration endpoint"}
+  - {id: GHSA-5mg7-485q-xm76, severity: critical, ranges: [">= 1.82.7, <= 1.82.8"], no_fix: true,
+     summary: "these releases were published with credential-harvesting malware"}

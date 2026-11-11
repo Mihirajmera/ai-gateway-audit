@@ -1,6 +1,6 @@
 services:
   litellm:
-    image: ghcr.io/berriai/litellm:main-stable
+    image: ghcr.io/berriai/litellm:main-v1.94.0-stable
     command: ["--config", "/app/config.yaml"]
     ports: ["4000:4000"]
     volumes: ["./config.yaml:/app/config.yaml"]

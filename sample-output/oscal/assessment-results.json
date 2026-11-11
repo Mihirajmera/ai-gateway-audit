@@ -43,6 +43,9 @@
                   "control-id": "ia-5.7"
                 },
                 {
+                  "control-id": "ra-5"
+                },
+                {
                   "control-id": "sc-12"
                 },
                 {
@@ -62,6 +65,9 @@
                 },
                 {
                   "control-id": "si-12"
+                },
+                {
+                  "control-id": "si-2"
                 },
                 {
                   "control-id": "si-7"
@@ -105,7 +111,7 @@
           {
             "uuid": "d740e2e8-b930-57ad-8bc2-acaa0f0d13b4",
             "title": "Configuration audit of insecure",
-            "description": "2 files read, 14 findings.",
+            "description": "2 files read, 15 findings.",
             "methods": [
               "EXAMINE"
             ],
@@ -126,7 +132,7 @@
                 "props": [
                   {
                     "name": "sha256",
-                    "value": "928a34e1a6a4bb68a8c3984431f955efe29139f540e58093f4c3f3167f0d1479"
+                    "value": "71e7c969833149da5f1f3c6eff6206ec17e27d488e4731b932f302e947d1b297"
                   }
                 ]
               }
@@ -255,6 +261,23 @@
             ]
           },
           {
+            "uuid": "9dc799ff-a91f-5951-a671-baee2fc91b40",
+            "title": "RA-5: GWA-11",
+            "description": "The gateway runs a LiteLLM release with no known high or critical advisory",
+            "target": {
+              "type": "objective-id",
+              "target-id": "ra-5",
+              "status": {
+                "state": "not-satisfied"
+              }
+            },
+            "related-observations": [
+              {
+                "observation-uuid": "d740e2e8-b930-57ad-8bc2-acaa0f0d13b4"
+              }
+            ]
+          },
+          {
             "uuid": "e34a1c89-8e15-5839-be21-af3fc24f7858",
             "title": "SC-12: GWA-04",
             "description": "Provider keys are not held in the gateway database",
@@ -363,6 +386,23 @@
             "target": {
               "type": "objective-id",
               "target-id": "si-12",
+              "status": {
+                "state": "not-satisfied"
+              }
+            },
+            "related-observations": [
+              {
+                "observation-uuid": "d740e2e8-b930-57ad-8bc2-acaa0f0d13b4"
+              }
+            ]
+          },
+          {
+            "uuid": "1693fcc7-e6b1-5e9d-833c-678019fdab40",
+            "title": "SI-2: GWA-11",
+            "description": "The gateway runs a LiteLLM release with no known high or critical advisory",
+            "target": {
+              "type": "objective-id",
+              "target-id": "si-2",
               "status": {
                 "state": "not-satisfied"
               }

@@ -80,6 +80,13 @@ controls:
     soc2: []
     owasp_llm: [LLM10]
 
+  GWA-11:
+    title: The gateway runs a LiteLLM release with no known high or critical advisory
+    needs: deployment
+    nist_800_53: [SI-2, RA-5]
+    soc2: [CC7.1]
+    owasp_llm: [LLM03]
+
 # Controls a configuration file can't prove. Listed in every report so a reviewer knows what
 # still needs evidence from somewhere else.
 manual:

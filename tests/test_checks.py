@@ -130,3 +130,25 @@ def test_size_limits(gateway):
     cfg = copy.deepcopy(HARDENED)
     del cfg['general_settings']['allowed_file_extensions']
     assert ids(results(gateway, cfg), 'GWA-10') == [('low', 'general_settings.allowed_file_extensions')]
+
+
+@pytest.mark.parametrize('image,expected', [
+    ('ghcr.io/berriai/litellm:v1.94.0-stable', 'Upgrade to 1.100.4'),     # 1.95.0 fixes one but not the other
+    ('ghcr.io/berriai/litellm:main-v1.102.1@sha256:' + '0' * 64, 'Upgrade to 1.102.2'),
+    ('ghcr.io/berriai/litellm:1.82.7', 'Stop this container now'),         # the malware releases
+    ('ghcr.io/berriai/litellm:v1.83.7rc1', 'Upgrade to 1.100.4'),          # a pre-release sorts before 1.83.7
+])
+def test_known_advisories_for_the_running_release(gateway, image, expected):
+    [f] = results(gateway, compose_env=DOCS_OFF, image=image)['GWA-11']
+    assert f.severity == 'high' and f.setting == 'services.litellm.image' and expected in f.recommendation
+
+
+@pytest.mark.parametrize('image', ['ghcr.io/berriai/litellm:v1.102.2', 'ghcr.io/berriai/litellm:v1.106.2'])
+def test_a_patched_release_passes(gateway, image):
+    assert results(gateway, compose_env=DOCS_OFF, image=image)['GWA-11'] == []
+
+
+@pytest.mark.parametrize('image', ['ghcr.io/berriai/litellm:main-stable',
+                                   'ghcr.io/berriai/litellm@sha256:' + '0' * 64, 'postgres:16.4.0'])
+def test_no_version_in_the_tag_is_not_assessed(gateway, image):
+    assert results(gateway, compose_env=DOCS_OFF, image=image)['GWA-11'] is None
