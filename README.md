@@ -21,7 +21,7 @@ ai-gateway-audit demo
 ```
 DEPLOYMENT                    HIGH   MED   LOW   N/A
 hardened                         0     0     0     0
-insecure                         7     4     3     0
+insecure                         7     5     3     0
 ```
 
 Read the [sample report](sample-output/gateway-audit.md) without installing anything.
@@ -80,7 +80,7 @@ flowchart LR
     subgraph CORE["⚙️ ai_gateway_audit"]
         P["Parsers<br/>secrets redacted here"]
         M["Deployment model<br/>one per folder"]
-        X["10 checks<br/>GWA-01 … GWA-10"]
+        X["11 checks<br/>GWA-01 … GWA-11"]
         K[("Control catalog<br/>controls.yaml")]
         XC[("Reviewed exceptions<br/>owner + expiry")]
     end
@@ -125,6 +125,7 @@ flowchart LR
 | GWA-08 | TLS certificates are verified on calls to providers | `ssl_verify: false` |
 | GWA-09 | Interactive API documentation is disabled | `NO_DOCS` / `NO_REDOC` / `NO_OPENAPI` not set |
 | GWA-10 | Request and upload sizes are limited | no `max_request_size_mb` or `allowed_file_extensions` |
+| GWA-11 | The gateway runs a LiteLLM release with no known high or critical advisory | `litellm:main-v1.94.0-stable`, open to the October 2026 file-read and salt-key escalations ([list](ai_gateway_audit/advisories.yaml), updated with each release) |
 
 Each check is mapped to NIST SP 800-53, SOC 2 and the OWASP Top 10 for LLM Applications in [`controls.yaml`](ai_gateway_audit/controls.yaml). The mappings are my judgment; check them against the official crosswalks before relying on them in an audit.
 

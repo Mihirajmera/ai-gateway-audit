@@ -59,7 +59,7 @@
     },
     "images": [
       {
-        "ref": "ghcr.io/berriai/litellm:main-stable",
+        "ref": "ghcr.io/berriai/litellm:main-v1.94.0-stable",
         "service": "litellm",
         "source": "insecure/docker-compose.yml"
       }
@@ -223,10 +223,10 @@
           "check_id": "GWA-07",
           "deployment_id": "insecure",
           "exception": null,
-          "message": "Service `litellm` runs `ghcr.io/berriai/litellm:main-stable`, a moving tag. Whatever is published under it next runs with every provider key. LiteLLM's October 2026 compromise repointed latest, main-latest and main-stable to a malicious image.",
-          "recommendation": "Pin a reviewed release by digest: image: \u2026litellm@sha256:<digest>.",
+          "message": "Service `litellm` runs `ghcr.io/berriai/litellm:main-v1.94.0-stable`, pinned by tag but not by digest. Tags can be moved to different content.",
+          "recommendation": "Add the digest of the reviewed image: image: \u2026litellm:<tag>@sha256:<digest>.",
           "setting": "services.litellm.image",
-          "severity": "high"
+          "severity": "medium"
         }
       ],
       "status": "FAIL",
@@ -279,9 +279,25 @@
       ],
       "status": "FAIL",
       "title": "Request and upload sizes are limited"
+    },
+    {
+      "check_id": "GWA-11",
+      "findings": [
+        {
+          "check_id": "GWA-11",
+          "deployment_id": "insecure",
+          "exception": null,
+          "message": "Service `litellm` runs LiteLLM 1.94.0, affected by 2 high or critical advisories (0 critical) known as of 2026-11-11: GHSA-g5ff-637f-6q2m, CVE-2026-114612. First: internal_user_viewer can read any local file, including the master key, via vertex_ai_credentials.",
+          "recommendation": "Upgrade to 1.100.4 or later and pin it by digest. If anyone other than admins could sign in while this version ran, rotate the master key and provider keys after upgrading.",
+          "setting": "services.litellm.image",
+          "severity": "high"
+        }
+      ],
+      "status": "FAIL",
+      "title": "The gateway runs a LiteLLM release with no known high or critical advisory"
     }
   ],
-  "sha256": "928a34e1a6a4bb68a8c3984431f955efe29139f540e58093f4c3f3167f0d1479",
+  "sha256": "71e7c969833149da5f1f3c6eff6206ec17e27d488e4731b932f302e947d1b297",
   "sources": [
     {
       "path": "insecure/config.yaml",
@@ -290,7 +306,7 @@
     },
     {
       "path": "insecure/docker-compose.yml",
-      "sha256": "2514814ed6317c71b7ae8a9758f6b2b67a3466508fbe9dba99abb8177252883c",
+      "sha256": "f16bac1b3727f0e0759ce64254accebe2a64566274ab1ceb46aac72a9e5b1e2f",
       "type": "compose"
     }
   ]

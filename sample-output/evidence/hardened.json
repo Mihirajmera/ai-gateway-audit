@@ -154,6 +154,12 @@
       "findings": [],
       "status": "PASS",
       "title": "Request and upload sizes are limited"
+    },
+    {
+      "check_id": "GWA-11",
+      "findings": [],
+      "status": "PASS",
+      "title": "The gateway runs a LiteLLM release with no known high or critical advisory"
     }
   ],
   "sha256": "666766d3f652d747afbd33b4114e25ba12934bf6e3256be962387b13274d55ec",
