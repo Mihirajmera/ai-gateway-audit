@@ -3,6 +3,7 @@
 [![Tests](https://github.com/Mihirajmera/ai-gateway-audit/actions/workflows/tests.yml/badge.svg)](https://github.com/Mihirajmera/ai-gateway-audit/actions/workflows/tests.yml)
 [![CodeQL](https://github.com/Mihirajmera/ai-gateway-audit/actions/workflows/codeql.yml/badge.svg)](https://github.com/Mihirajmera/ai-gateway-audit/actions/workflows/codeql.yml)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/Mihirajmera/ai-gateway-audit/badge)](https://scorecard.dev/viewer/?uri=github.com/Mihirajmera/ai-gateway-audit)
+[![PyPI](https://img.shields.io/pypi/v/ai-gateway-audit)](https://pypi.org/project/ai-gateway-audit/)
 [![Fuzzing: ClusterFuzzLite](https://img.shields.io/badge/fuzzing-ClusterFuzzLite-blue)](https://github.com/Mihirajmera/ai-gateway-audit/actions/workflows/cflite_batch.yml)
 ![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
