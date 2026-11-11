@@ -14,7 +14,7 @@ An AI gateway such as [LiteLLM](https://github.com/BerriAI/litellm) holds the AP
 `ai-gateway-audit` reads a gateway's configuration and deployment files, checks them against ten controls, and produces evidence an auditor can use: a reviewer report, a findings sheet, hashed evidence files and OSCAL assessment results. Findings can be accepted only through a reviewed exception with an owner and an expiry date.
 
 ```bash
-pip install git+https://github.com/Mihirajmera/ai-gateway-audit
+pip install ai-gateway-audit
 ai-gateway-audit demo
 ```
 
