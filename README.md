@@ -26,6 +26,8 @@ insecure                         7     5     3     0
 
 Read the [sample report](sample-output/gateway-audit.md) without installing anything.
 
+[![The sample report this tool produces, from sample-output/gateway-audit.md](docs/report.png)](sample-output/gateway-audit.md)
+
 ## Why the gateway is tier-0
 
 Every application and agent reaches every model through one process. That process holds the keys, sees the traffic and, often, stores both. Each box below is something an attacker who controls the gateway gets, and each label is the check that covers it.
