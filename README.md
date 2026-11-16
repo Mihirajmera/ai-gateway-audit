@@ -26,6 +26,8 @@ insecure                         7     5     3     0
 
 Read the [sample report](sample-output/gateway-audit.md) without installing anything.
 
+![ai-gateway-audit demo: the insecure LiteLLM example fails all 11 checks, the hardened one passes](docs/demo.gif)
+
 [![The sample report this tool produces, from sample-output/gateway-audit.md](docs/report.png)](sample-output/gateway-audit.md)
 
 ## Why the gateway is tier-0
