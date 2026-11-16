@@ -1,0 +1,23 @@
+$ ai-gateway-audit demo
+DEPLOYMENT                    HIGH   MED   LOW   N/A
+hardened                         0     0     0     0
+insecure                         7     5     3     0
+
+Report:   audit-demo/gateway-audit.md
+Findings: audit-demo/findings.csv
+OSCAL:    audit-demo/oscal/assessment-results.json
+
+The insecure example fails on purpose; the hardened one shows what passing looks like.
+Next: run `ai-gateway-audit scan <folder with your config.yaml and compose file>`.
+$ grep -m 11 '^| GWA' audit-demo/gateway-audit.md | cut -d'|' -f2,3,5
+ GWA-01 | Provider credentials are not stored in plain text | FAIL 
+ GWA-02 | The proxy requires a master key that is not stored in plain text | FAIL 
+ GWA-03 | Prompts and responses are kept out of logs | FAIL 
+ GWA-04 | Provider keys are not held in the gateway database | FAIL 
+ GWA-05 | The admin UI does not accept a shared environment login | FAIL 
+ GWA-06 | Spend is capped globally and per key | FAIL 
+ GWA-07 | The gateway image is pinned by digest | FAIL 
+ GWA-08 | TLS certificates are verified on calls to providers | FAIL 
+ GWA-09 | Interactive API documentation is disabled | FAIL 
+ GWA-10 | Request and upload sizes are limited | FAIL 
+ GWA-11 | The gateway runs a LiteLLM release with no known high or critical advisory | FAIL 
